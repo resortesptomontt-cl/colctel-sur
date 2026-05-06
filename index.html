@@ -1907,7 +1907,7 @@ function renderRecipes(){
               style="border:1.5px solid ${r.fav?"var(--amber)":"var(--border)"};border-radius:10px;padding:9px 10px;font-size:13px;background:${r.fav?"rgba(223,160,32,.15)":""}" title="Favorito">
               ${r.fav?"⭐":"☆"}
             </button>
-            <button onclick="confirmDelete('recipe','${r.id}','¿Eliminar \"${r.nombre.replace(/'/g,"\\'")}\"? No se puede deshacer.')"
+            <button onclick="confirmDeleteRecipe('${r.id}')" style="border:1.5px solid var(--rust2);border-radius:10px;padding:9px 10px;font-size:14px;color:var(--rust)">🗑</button>
               style="border:1.5px solid var(--rust2);border-radius:10px;padding:9px 10px;font-size:14px;color:var(--rust)">🗑</button>
           </div>
         </div>
@@ -2455,7 +2455,7 @@ function renderPrices(){
               style="font-size:13px;color:var(--amber);font-weight:600;padding:2px 8px;background:${advOpen?"rgba(196,123,22,.15)":""};border-radius:8px">
               ${advOpen?"▲":"⚙️"}
             </button>
-            <button class="btn-icon" onclick="confirmDelete('price','${p.id}','¿Eliminar ${p.nombre.replace(/'/g,"\\'")}?')">🗑</button>
+                <button onclick="confirmDeletePrice('" + p.id + "')" style="color:var(--gray);font-size:18px;padding:6px 4px">🗑</button>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:6px">
@@ -2750,7 +2750,7 @@ function changePlanItemQ(id,d){
    CONFIRMAR ELIMINAR
 ═══════════════════════════════════════════════════════ */
 function confirmDelete(type,id,msg){
-  $("confirm-msg").textContent=msg;
+  $("confirm-msg").textContent=msg||"¿Estás seguro? Esta acción no se puede deshacer.";
   $("confirm-btn").onclick=()=>{
     if(type==="recipe"){ recipes=recipes.filter(r=>r.id!==id);saveR();renderRecipes();showToast("🗑 Receta eliminada"); }
     else if(type==="price"){ prices=prices.filter(p=>p.id!==id);saveP();renderPrices();showToast("🗑 Eliminado"); }
@@ -2758,6 +2758,25 @@ function confirmDelete(type,id,msg){
     closeSheet("confirm");
   };
   openSheet("confirm");
+}
+
+/* Funciones seguras sin pasar strings en onclick */
+function confirmDeleteRecipe(id){
+  const r=recipes.find(x=>x.id===id);
+  const msg=r?`¿Eliminar "${r.nombre}"? No se puede deshacer.`:"¿Eliminar esta receta?";
+  confirmDelete("recipe",id,msg);
+}
+
+function confirmDeletePrice(id){
+  const p=prices.find(x=>x.id===id);
+  const msg=p?`¿Eliminar "${p.nombre}" de la lista?`:"¿Eliminar este ingrediente?";
+  confirmDelete("price",id,msg);
+}
+
+function confirmDeleteCotiz(id){
+  const c=cotizaciones.find(x=>x.id===id);
+  const msg=c?`¿Eliminar cotización "${c.nombre}"?`:"¿Eliminar esta cotización?";
+  confirmDelete("cotiz",id,msg);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -3045,7 +3064,7 @@ function renderCotiz(){
               style="border:1.5px solid var(--border);border-radius:10px;padding:9px 6px;font-size:12px;font-weight:600;color:var(--gray);background:white;cursor:pointer">
               ${ESTADOS.map(e=>`<option value="${e}" ${e===c.estado?"selected":""}>${ESTADO_LABEL[e]}</option>`).join("")}
             </select>
-            <button onclick="confirmDelete('cotiz','${c.id}','¿Eliminar esta cotización?')"
+            <button onclick="confirmDeleteCotiz('${c.id}')"
               style="border:1.5px solid var(--rust2);border-radius:10px;padding:9px 10px;font-size:14px;color:var(--rust)">🗑</button>
           </div>
         </div>
