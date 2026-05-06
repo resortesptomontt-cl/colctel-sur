@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Coctel Sur">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2E1F0F">
+<meta name="description" content="Sistema de recetas, costos y cotizaciones — Coctel Sur">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>Coctel Sur — Gestión de Recetas</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -106,7 +113,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
   .nav-label{font-size:13px;font-weight:600;white-space:nowrap;letter-spacing:.1px}
   #nav-logo-desktop{display:flex}
   /* Main area */
-  #main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+  #main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;position:relative}
   /* Header — ocultar en desktop, el logo va en sidebar */
   #header{height:58px;padding:0 24px;flex-shrink:0}
   .logo-name{font-size:17px}
@@ -140,7 +147,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
   .fab-round{right:32px;bottom:32px}
   /* Editor full */
   #view-editor{max-width:none}
-  .editor-scroll{padding:20px;max-width:900px;margin:0 auto;width:100%}
+  .editor-scroll{
+    padding:20px 20px 100px;
+    max-width:900px;
+    margin:0 auto;
+    width:100%;
+    overflow-y:auto !important;
+    flex:1 !important;
+    min-height:0 !important;
+    display:block !important;
+    -webkit-overflow-scrolling:touch;
+  }
+  .editor-scroll > *{margin-bottom:12px}
+  .editor-scroll > *:last-child{margin-bottom:0}
   .editor-footer{padding:16px 20px}
   /* Producción */
   .prod-controls{padding:16px 24px}
@@ -226,7 +245,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
   opacity:0;pointer-events:none;transition:opacity .18s;
   padding-bottom:calc(68px + env(safe-area-inset-bottom,0px) + 8px)}
 .view.active{opacity:1;pointer-events:all}
-#view-editor{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
+#view-editor{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;z-index:100;height:100%;min-height:0}
 #view-editor.active{display:flex}
 #view-produccion{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
 #view-produccion.active{display:flex}
@@ -278,11 +297,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .btn-icon:active{color:var(--rust)}
 
 /* ── SHEET (panel desde abajo) ── */
-.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:70;animation:fadeIn .2s;display:none}
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:170;animation:fadeIn .2s;display:none}
 .sheet-overlay.open{display:block}
 .sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
   width:100%;max-width:520px;background:white;border-radius:20px 20px 0 0;
-  z-index:80;max-height:92vh;display:flex;flex-direction:column;
+  z-index:180;max-height:92vh;display:flex;flex-direction:column;
   transition:transform .3s cubic-bezier(.32,.72,0,1)}
 .sheet.open{transform:translateX(-50%) translateY(0)}
 .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 0;flex-shrink:0}
@@ -306,7 +325,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 #toast{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom,0px) + 10px);left:50%;
   transform:translateX(-50%) translateY(80px);background:var(--bark);color:white;
   padding:10px 22px;border-radius:50px;font-size:13px;font-weight:600;
-  box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:2000;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:3000;white-space:nowrap;
   transition:transform .3s;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0);animation:toastIn .3s ease}
 
@@ -374,7 +393,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
     box-shadow:0 12px 40px rgba(0,0,0,.22);
     max-height:420px;flex-direction:column;
     animation:slideDown .15s ease;
-    z-index:1000;
+    z-index:2000;
   }
   .dropdown-header{display:none}
   .dropdown-list{overflow-y:auto;flex:1}
@@ -385,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 }
 
 /* ── EDITOR ── */
-.editor-scroll{overflow-y:auto;flex:1;padding:12px;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:12px}
+.editor-scroll{overflow-y:auto;flex:1;min-height:0;padding:12px 12px 100px;-webkit-overflow-scrolling:touch;display:block}
 .editor-footer{padding:12px;border-top:1px solid var(--border);background:white;flex-shrink:0;
   padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
 
@@ -903,7 +922,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 
 <!-- SHEET: AGREGAR INGREDIENTE NUEVO DESDE BUSCADOR -->
 <div class="sheet-overlay" id="ov-newing" onclick="closeSheet('newing')"></div>
-<div class="sheet" id="sheet-newing" style="z-index:90">
+<div class="sheet" id="sheet-newing" style="z-index:190">
   <div class="sheet-handle"></div>
   <div class="sheet-header">
     <span class="sheet-title">➕ Nuevo ingrediente</span>
@@ -1007,7 +1026,9 @@ const fmtN=v=>(!v||isNaN(v))?"0":parseFloat(v.toFixed(3)).toLocaleString("es-CL"
 const uid=()=>Date.now()+""+Math.floor(Math.random()*9999);
 const today=()=>new Date().toLocaleDateString("es-CL");
 const daysAgo=d=>{if(!d)return 999;const[dd,mm,yy]=d.split("/").map(Number);return Math.floor((Date.now()-new Date(yy,mm-1,dd))/(864e5));};
-const $ = id => document.getElementById(id);  // helper — puede retornar null, usar con guard
+const $ = id => document.getElementById(id);  // helper
+// Alias de colores para uso en strings dinámicas
+const C = {border:"rgba(46,31,15,.13)",gray:"#7A6B58",cream:"#F5F0E8"};
 
 function toBase(qty,uR,uB){
   const r=(uR||"").toLowerCase(),b=(uB||"").toLowerCase();
@@ -1139,6 +1160,7 @@ function openEditor(recipe){
 
 function closeEditor(){
   editorMode=null;
+  closePreciosPanel();
   const _ve2=$("view-editor"); if(_ve2) _ve2.classList.remove("active");
   $("bottom-nav").style.display="";
   $("header-logo").style.display="flex";
@@ -1146,6 +1168,128 @@ function closeEditor(){
   $("header-title").style.display="none";
   $("header-action").style.display=currentView==="precios"?"":"none";
 }
+
+/* Panel de precios flotante dentro del editor */
+function openPreciosPanel(){
+  let panel=$("precios-panel");
+  if(!panel){
+    panel=document.createElement("div");
+    panel.id="precios-panel";
+    panel.style.cssText=`
+      position:fixed;top:0;right:0;bottom:0;width:min(380px,92vw);
+      background:white;z-index:200;display:flex;flex-direction:column;
+      box-shadow:-4px 0 30px rgba(0,0,0,.2);animation:slideFromRight .3s cubic-bezier(.32,.72,0,1);
+    `;
+    // Agregar animación CSS si no existe
+    if(!document.getElementById("slide-right-anim")){
+      const st=document.createElement("style");
+      st.id="slide-right-anim";
+      st.textContent="@keyframes slideFromRight{from{transform:translateX(100%)}to{transform:translateX(0)}}";
+      document.head.appendChild(st);
+    }
+    panel.innerHTML=`
+      <div style="background:var(--bark);padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <button onclick="closePreciosPanel()" style="color:rgba(255,255,255,.8);font-size:20px;font-weight:700;padding:4px 8px">←</button>
+        <span style="font-family:'Lora',serif;font-size:16px;font-weight:700;color:#F5F0E8;flex:1">🏪 Lista de Precios</span>
+        <button onclick="openAddPrice()" style="background:var(--amber);color:white;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700">+ Nuevo</button>
+      </div>
+      <div style="display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0">
+        <input id="panel-search" placeholder="🔍 Buscar..." oninput="renderPreciosPanel()"
+          style="flex:1;border:1.5px solid var(--border);border-radius:9px;padding:8px 12px;font-size:14px;outline:none;background:var(--cream)">
+        <select id="panel-cat" onchange="renderPreciosPanel()"
+          style="border:1.5px solid var(--border);border-radius:9px;padding:8px;font-size:13px;outline:none;background:white;cursor:pointer">
+          <option value="">Todas</option>
+          <option value="carnes">🥩</option>
+          <option value="lacteos">🥛</option>
+          <option value="verduras">🥦</option>
+          <option value="cereales">🌾</option>
+          <option value="condimentos">🧂</option>
+          <option value="otros">📦</option>
+        </select>
+      </div>
+      <div id="precios-panel-list" style="overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch"></div>
+    `;
+    document.body.appendChild(panel);
+
+    // Overlay
+    const ov=document.createElement("div");
+    ov.id="precios-panel-ov";
+    ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:199;animation:fadeIn .2s";
+    ov.onclick=closePreciosPanel;
+    document.body.appendChild(ov);
+  } else {
+    panel.style.display="flex";
+    const ov=$("precios-panel-ov");
+    if(ov) ov.style.display="";
+  }
+  renderPreciosPanel();
+}
+
+function closePreciosPanel(){
+  const panel=$("precios-panel");
+  const ov=$("precios-panel-ov");
+  if(panel) panel.style.display="none";
+  if(ov) ov.style.display="none";
+}
+
+function renderPreciosPanel(){
+  const list=$("precios-panel-list");
+  if(!list) return;
+  const q=($("panel-search")?.value||"").toLowerCase();
+  const cat=$("panel-cat")?.value||"";
+  const fil=prices.filter(p=>
+    (!q||p.nombre.toLowerCase().includes(q))&&(!cat||p.cat===cat)
+  );
+  list.innerHTML=fil.map((p,i)=>{
+    const ep=effectivePrice(p);
+    const stale=daysAgo(p.historial?.[0]?.fecha)>30&&ep>0;
+    return`<div style="padding:11px 14px;border-bottom:1px solid rgba(0,0,0,.05);background:${i%2?"white":"#fdfbf8"}">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${CAT_COLOR[p.cat]||C.gray};flex-shrink:0;display:inline-block"></span>
+        <span style="font-weight:600;font-size:14px;flex:1">${p.nombre}</span>
+        ${stale?'<span style="font-size:9px;color:var(--rust);font-weight:700">⏰ viejo</span>':""}
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:12px;color:var(--gray)">$</span>
+        <input type="number" inputmode="numeric" value="${p.price||""}" placeholder="0" min="0"
+          style="flex:1;border:1.5px solid ${ep>0?"#86c98a":C.border};border-radius:8px;padding:7px 10px;
+          font-family:'DM Mono',monospace;font-size:14px;text-align:right;outline:none;
+          background:${ep>0?"#f0faf1":"var(--cream)"};color:${ep>0?"var(--sage)":"var(--espresso)"};font-weight:${ep>0?700:400}"
+          oninput="updatePriceFromPanel('${p.id}',this.value,this)">
+        <span style="font-size:12px;color:var(--gray);font-weight:500">por</span>
+        <select style="border:1.5px solid var(--border);border-radius:8px;padding:7px 8px;font-size:13px;outline:none;background:white;font-weight:600;cursor:pointer;min-width:60px"
+          onchange="updatePriceFieldFromPanel('${p.id}','unit',this.value)">
+          ${UNITS.map(u=>`<option ${u===p.unit?"selected":""}>${u}</option>`).join("")}
+        </select>
+      </div>
+    </div>`;
+  }).join("")||`<div style="padding:32px;text-align:center;color:var(--gray);font-size:13px">Sin resultados</div>`;
+}
+
+function updatePriceFromPanel(id,val,el){
+  const p=prices.find(x=>x.id===id);
+  if(!p) return;
+  p.price=parseFloat(val)||0;
+  p.historial=[{fecha:today(),precio:p.price},...(p.historial||[])].slice(0,12);
+  saveP();
+  if(el){
+    el.style.borderColor=p.price>0?"#86c98a":C.border;
+    el.style.background=p.price>0?"#f0faf1":"var(--cream)";
+    el.style.color=p.price>0?"var(--sage)":"var(--espresso)";
+    el.style.fontWeight=p.price>0?"700":"400";
+  }
+  // Refrescar costos del editor
+  renderEditorLines();
+}
+
+function updatePriceFieldFromPanel(id,field,val){
+  const p=prices.find(x=>x.id===id);
+  if(!p) return;
+  p[field]=val;
+  saveP();
+}
+
+// openAddPrice ya declarada globalmente
 
 function openProd(){
   closeSheet("porciones");
@@ -1386,7 +1530,12 @@ function buildEditor(recipe){
 
     <!-- Agregar ingrediente -->
     <div class="card" style="margin:0">
-      <div class="card-head"><div class="card-head-title">➕ Agregar ingrediente</div></div>
+      <div class="card-head">
+        <div class="card-head-title">➕ Agregar ingrediente</div>
+        <button onclick="openPreciosPanel()" style="font-size:11px;font-weight:700;color:var(--blue);padding:4px 10px;background:var(--blue2);border-radius:8px">
+          🏪 Ver precios
+        </button>
+      </div>
       <div class="card-body">
         <div style="display:flex;gap:8px;margin-bottom:0">
           ${buildIngSearch()}
