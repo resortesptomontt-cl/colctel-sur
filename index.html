@@ -41,7 +41,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 @keyframes slideUp{from{transform:translateY(110%)}to{transform:translateY(0)}}
 @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+/* toastIn removido — ahora usa opacity transition */
 
 /* ── SCROLLBAR desktop ── */
 ::-webkit-scrollbar{width:6px}
@@ -322,12 +322,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
 
 /* ── TOAST ── */
-#toast{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom,0px) + 10px);left:50%;
-  transform:translateX(-50%) translateY(80px);background:var(--bark);color:white;
+#toast{
+  position:fixed;
+  bottom:calc(68px + env(safe-area-inset-bottom,0px) + 16px);
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--bark);color:white;
   padding:10px 22px;border-radius:50px;font-size:13px;font-weight:600;
   box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:3000;white-space:nowrap;
-  transition:transform .3s;pointer-events:none}
-#toast.show{transform:translateX(-50%) translateY(0);animation:toastIn .3s ease}
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .25s ease;
+  max-width:90vw;
+  text-align:center;
+}
+#toast.show{opacity:1}
 
 /* ── SECCIÓN HEADERS ── */
 .sec-head{padding:18px 12px 10px}
@@ -1099,10 +1108,26 @@ const savePlan = ()=>localStorage.setItem("chefLP_plan",JSON.stringify(plan));
 /* ═══════════════════════════════════════════════════════
    TOAST
 ═══════════════════════════════════════════════════════ */
-let toastTimer;
+let toastTimer=null;
 function showToast(msg){
-  const t=$("toast");t.textContent=msg;t.classList.add("show");
-  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600);
+  const t=$("toast");
+  if(!t) return;
+  // Limpiar cualquier timer anterior
+  if(toastTimer){ clearTimeout(toastTimer); toastTimer=null; }
+  // Resetear sin transición para reiniciar
+  t.style.transition="none";
+  t.classList.remove("show");
+  t.textContent=msg;
+  // Forzar reflow para que el browser procese el remove antes del add
+  void t.offsetWidth;
+  // Mostrar con transición
+  t.style.transition="";
+  t.classList.add("show");
+  // Ocultar después de 2.5s
+  toastTimer=setTimeout(()=>{
+    if(t) t.classList.remove("show");
+    toastTimer=null;
+  },2500);
 }
 
 /* ═══════════════════════════════════════════════════════
